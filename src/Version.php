@@ -19,7 +19,7 @@ use GregPriday\Version\Traits\VersionBumpingTrait;
 class Version
 {
     use VersionBumpingTrait;
-    
+
     /**
      * The version string.
      */

@@ -20,18 +20,18 @@ class VersionBumpingTraitTest extends TestCase
     ): void {
         $version = Version::fromString($initialVersion);
         $bumpedVersion = $version->bumpMajor($preservePreRelease, $preserveBuildMetadata);
-        
+
         $this->assertEquals($expectedVersion, $bumpedVersion->getExtraInfo()['version']);
         $this->assertEquals($version->getMajor() + 1, $bumpedVersion->getMajor());
         $this->assertEquals(0, $bumpedVersion->getMinor());
         $this->assertEquals(0, $bumpedVersion->getPatch());
-        
+
         if ($preservePreRelease) {
             $this->assertEquals($version->getPreRelease(), $bumpedVersion->getPreRelease());
         } else {
             $this->assertNull($bumpedVersion->getPreRelease());
         }
-        
+
         if ($preserveBuildMetadata) {
             $this->assertEquals($version->getBuildMetadata(), $bumpedVersion->getBuildMetadata());
         } else {
@@ -65,18 +65,18 @@ class VersionBumpingTraitTest extends TestCase
     ): void {
         $version = Version::fromString($initialVersion);
         $bumpedVersion = $version->bumpMinor($preservePreRelease, $preserveBuildMetadata);
-        
+
         $this->assertEquals($expectedVersion, $bumpedVersion->getExtraInfo()['version']);
         $this->assertEquals($version->getMajor(), $bumpedVersion->getMajor());
         $this->assertEquals($version->getMinor() + 1, $bumpedVersion->getMinor());
         $this->assertEquals(0, $bumpedVersion->getPatch());
-        
+
         if ($preservePreRelease) {
             $this->assertEquals($version->getPreRelease(), $bumpedVersion->getPreRelease());
         } else {
             $this->assertNull($bumpedVersion->getPreRelease());
         }
-        
+
         if ($preserveBuildMetadata) {
             $this->assertEquals($version->getBuildMetadata(), $bumpedVersion->getBuildMetadata());
         } else {
@@ -110,18 +110,18 @@ class VersionBumpingTraitTest extends TestCase
     ): void {
         $version = Version::fromString($initialVersion);
         $bumpedVersion = $version->bumpPatch($preservePreRelease, $preserveBuildMetadata);
-        
+
         $this->assertEquals($expectedVersion, $bumpedVersion->getExtraInfo()['version']);
         $this->assertEquals($version->getMajor(), $bumpedVersion->getMajor());
         $this->assertEquals($version->getMinor(), $bumpedVersion->getMinor());
         $this->assertEquals($version->getPatch() + 1, $bumpedVersion->getPatch());
-        
+
         if ($preservePreRelease) {
             $this->assertEquals($version->getPreRelease(), $bumpedVersion->getPreRelease());
         } else {
             $this->assertNull($bumpedVersion->getPreRelease());
         }
-        
+
         if ($preserveBuildMetadata) {
             $this->assertEquals($version->getBuildMetadata(), $bumpedVersion->getBuildMetadata());
         } else {
@@ -155,13 +155,13 @@ class VersionBumpingTraitTest extends TestCase
     ): void {
         $version = Version::fromString($initialVersion);
         $bumpedVersion = $version->bumpPreRelease($identifier, $preserveBuildMetadata);
-        
+
         $this->assertEquals($expectedVersion, $bumpedVersion->getExtraInfo()['version']);
         $this->assertEquals($version->getMajor(), $bumpedVersion->getMajor());
         $this->assertEquals($version->getMinor(), $bumpedVersion->getMinor());
         $this->assertEquals($version->getPatch(), $bumpedVersion->getPatch());
         $this->assertNotNull($bumpedVersion->getPreRelease());
-        
+
         if ($preserveBuildMetadata) {
             $this->assertEquals($version->getBuildMetadata(), $bumpedVersion->getBuildMetadata());
         } else {
@@ -197,28 +197,28 @@ class VersionBumpingTraitTest extends TestCase
     ): void {
         $version = Version::fromString($initialVersion);
         $loweredVersion = $version->lowerMajor($resetMinor, $resetPatch, $preservePreRelease, $preserveBuildMetadata);
-        
+
         $this->assertEquals($expectedVersion, $loweredVersion->getExtraInfo()['version']);
         $this->assertEquals($version->getMajor() - 1, $loweredVersion->getMajor());
-        
+
         if ($resetMinor) {
             $this->assertEquals(0, $loweredVersion->getMinor());
         } else {
             $this->assertEquals($version->getMinor(), $loweredVersion->getMinor());
         }
-        
+
         if ($resetPatch) {
             $this->assertEquals(0, $loweredVersion->getPatch());
         } else {
             $this->assertEquals($version->getPatch(), $loweredVersion->getPatch());
         }
-        
+
         if ($preservePreRelease) {
             $this->assertEquals($version->getPreRelease(), $loweredVersion->getPreRelease());
         } else {
             $this->assertNull($loweredVersion->getPreRelease());
         }
-        
+
         if ($preserveBuildMetadata) {
             $this->assertEquals($version->getBuildMetadata(), $loweredVersion->getBuildMetadata());
         } else {
@@ -248,10 +248,10 @@ class VersionBumpingTraitTest extends TestCase
     public function test_lower_major_throws_exception_at_zero(): void
     {
         $version = Version::fromString('0.1.0');
-        
+
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot lower major version below 0');
-        
+
         $version->lowerMajor();
     }
 
@@ -268,23 +268,23 @@ class VersionBumpingTraitTest extends TestCase
     ): void {
         $version = Version::fromString($initialVersion);
         $loweredVersion = $version->lowerMinor($resetPatch, $preservePreRelease, $preserveBuildMetadata);
-        
+
         $this->assertEquals($expectedVersion, $loweredVersion->getExtraInfo()['version']);
         $this->assertEquals($version->getMajor(), $loweredVersion->getMajor());
         $this->assertEquals($version->getMinor() - 1, $loweredVersion->getMinor());
-        
+
         if ($resetPatch) {
             $this->assertEquals(0, $loweredVersion->getPatch());
         } else {
             $this->assertEquals($version->getPatch(), $loweredVersion->getPatch());
         }
-        
+
         if ($preservePreRelease) {
             $this->assertEquals($version->getPreRelease(), $loweredVersion->getPreRelease());
         } else {
             $this->assertNull($loweredVersion->getPreRelease());
         }
-        
+
         if ($preserveBuildMetadata) {
             $this->assertEquals($version->getBuildMetadata(), $loweredVersion->getBuildMetadata());
         } else {
@@ -312,10 +312,10 @@ class VersionBumpingTraitTest extends TestCase
     public function test_lower_minor_throws_exception_at_zero(): void
     {
         $version = Version::fromString('1.0.0');
-        
+
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot lower minor version below 0');
-        
+
         $version->lowerMinor();
     }
 
@@ -331,18 +331,18 @@ class VersionBumpingTraitTest extends TestCase
     ): void {
         $version = Version::fromString($initialVersion);
         $loweredVersion = $version->lowerPatch($preservePreRelease, $preserveBuildMetadata);
-        
+
         $this->assertEquals($expectedVersion, $loweredVersion->getExtraInfo()['version']);
         $this->assertEquals($version->getMajor(), $loweredVersion->getMajor());
         $this->assertEquals($version->getMinor(), $loweredVersion->getMinor());
         $this->assertEquals($version->getPatch() - 1, $loweredVersion->getPatch());
-        
+
         if ($preservePreRelease) {
             $this->assertEquals($version->getPreRelease(), $loweredVersion->getPreRelease());
         } else {
             $this->assertNull($loweredVersion->getPreRelease());
         }
-        
+
         if ($preserveBuildMetadata) {
             $this->assertEquals($version->getBuildMetadata(), $loweredVersion->getBuildMetadata());
         } else {
@@ -369,10 +369,10 @@ class VersionBumpingTraitTest extends TestCase
     public function test_lower_patch_throws_exception_at_zero(): void
     {
         $version = Version::fromString('1.2.0');
-        
+
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot lower patch version below 0');
-        
+
         $version->lowerPatch();
     }
-} 
+}

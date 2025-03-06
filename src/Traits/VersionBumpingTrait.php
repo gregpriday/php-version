@@ -15,8 +15,8 @@ trait VersionBumpingTrait
      * Resets minor and patch to 0.
      * By default, strips pre-release and build metadata.
      *
-     * @param bool $preservePreRelease Whether to preserve the pre-release info (default: false)
-     * @param bool $preserveBuildMetadata Whether to preserve the build metadata (default: false)
+     * @param  bool  $preservePreRelease  Whether to preserve the pre-release info (default: false)
+     * @param  bool  $preserveBuildMetadata  Whether to preserve the build metadata (default: false)
      * @return self A new Version instance with the updated version
      */
     public function bumpMajor(bool $preservePreRelease = false, bool $preserveBuildMetadata = false): self
@@ -25,17 +25,17 @@ trait VersionBumpingTrait
         $parts['major']++;
         $parts['minor'] = 0;
         $parts['patch'] = 0;
-        
-        if (!$preservePreRelease) {
+
+        if (! $preservePreRelease) {
             $parts['pre'] = null;
         }
-        
-        if (!$preserveBuildMetadata) {
+
+        if (! $preserveBuildMetadata) {
             $parts['build'] = null;
         }
-        
+
         $newVersionString = $this->buildVersionString($parts);
-        
+
         return new self($newVersionString, $parts);
     }
 
@@ -44,8 +44,8 @@ trait VersionBumpingTrait
      * Resets patch to 0.
      * By default, strips pre-release and build metadata.
      *
-     * @param bool $preservePreRelease Whether to preserve the pre-release info (default: false)
-     * @param bool $preserveBuildMetadata Whether to preserve the build metadata (default: false)
+     * @param  bool  $preservePreRelease  Whether to preserve the pre-release info (default: false)
+     * @param  bool  $preserveBuildMetadata  Whether to preserve the build metadata (default: false)
      * @return self A new Version instance with the updated version
      */
     public function bumpMinor(bool $preservePreRelease = false, bool $preserveBuildMetadata = false): self
@@ -53,17 +53,17 @@ trait VersionBumpingTrait
         $parts = $this->parts;
         $parts['minor']++;
         $parts['patch'] = 0;
-        
-        if (!$preservePreRelease) {
+
+        if (! $preservePreRelease) {
             $parts['pre'] = null;
         }
-        
-        if (!$preserveBuildMetadata) {
+
+        if (! $preserveBuildMetadata) {
             $parts['build'] = null;
         }
-        
+
         $newVersionString = $this->buildVersionString($parts);
-        
+
         return new self($newVersionString, $parts);
     }
 
@@ -71,25 +71,25 @@ trait VersionBumpingTrait
      * Bumps the patch version number by 1.
      * By default, strips pre-release and build metadata.
      *
-     * @param bool $preservePreRelease Whether to preserve the pre-release info (default: false)
-     * @param bool $preserveBuildMetadata Whether to preserve the build metadata (default: false)
+     * @param  bool  $preservePreRelease  Whether to preserve the pre-release info (default: false)
+     * @param  bool  $preserveBuildMetadata  Whether to preserve the build metadata (default: false)
      * @return self A new Version instance with the updated version
      */
     public function bumpPatch(bool $preservePreRelease = false, bool $preserveBuildMetadata = false): self
     {
         $parts = $this->parts;
         $parts['patch']++;
-        
-        if (!$preservePreRelease) {
+
+        if (! $preservePreRelease) {
             $parts['pre'] = null;
         }
-        
-        if (!$preserveBuildMetadata) {
+
+        if (! $preserveBuildMetadata) {
             $parts['build'] = null;
         }
-        
+
         $newVersionString = $this->buildVersionString($parts);
-        
+
         return new self($newVersionString, $parts);
     }
 
@@ -98,15 +98,15 @@ trait VersionBumpingTrait
      * If no existing pre-release tag, sets it to the specified identifier.
      * If a pre-release tag exists with a numeric suffix, increments that suffix.
      *
-     * @param string|null $identifier The pre-release identifier to use (default: 'beta')
-     * @param bool $preserveBuildMetadata Whether to preserve the build metadata (default: false)
+     * @param  string|null  $identifier  The pre-release identifier to use (default: 'beta')
+     * @param  bool  $preserveBuildMetadata  Whether to preserve the build metadata (default: false)
      * @return self A new Version instance with the updated version
      */
     public function bumpPreRelease(?string $identifier = 'beta', bool $preserveBuildMetadata = false): self
     {
         $parts = $this->parts;
         $currentPreRelease = $parts['pre'];
-        
+
         if ($currentPreRelease === null) {
             // No pre-release exists, create one
             $parts['pre'] = $identifier;
@@ -116,19 +116,19 @@ trait VersionBumpingTrait
                 // If it has a numeric suffix (e.g., beta.1), increment the number
                 $baseIdentifier = $matches[1];
                 $numericSuffix = (int) $matches[2];
-                $parts['pre'] = $baseIdentifier . '.' . ($numericSuffix + 1);
+                $parts['pre'] = $baseIdentifier.'.'.($numericSuffix + 1);
             } else {
                 // If it doesn't have a numeric suffix, add .1
-                $parts['pre'] = $currentPreRelease . '.1';
+                $parts['pre'] = $currentPreRelease.'.1';
             }
         }
-        
-        if (!$preserveBuildMetadata) {
+
+        if (! $preserveBuildMetadata) {
             $parts['build'] = null;
         }
-        
+
         $newVersionString = $this->buildVersionString($parts);
-        
+
         return new self($newVersionString, $parts);
     }
 
@@ -137,11 +137,12 @@ trait VersionBumpingTrait
      * Optionally resets minor and patch.
      * Throws an exception if the major version is already 0.
      *
-     * @param bool $resetMinor Whether to reset the minor version to 0 (default: false)
-     * @param bool $resetPatch Whether to reset the patch version to 0 (default: false)
-     * @param bool $preservePreRelease Whether to preserve the pre-release info (default: false)
-     * @param bool $preserveBuildMetadata Whether to preserve the build metadata (default: false)
+     * @param  bool  $resetMinor  Whether to reset the minor version to 0 (default: false)
+     * @param  bool  $resetPatch  Whether to reset the patch version to 0 (default: false)
+     * @param  bool  $preservePreRelease  Whether to preserve the pre-release info (default: false)
+     * @param  bool  $preserveBuildMetadata  Whether to preserve the build metadata (default: false)
      * @return self A new Version instance with the updated version
+     *
      * @throws \InvalidArgumentException If the major version is already 0
      */
     public function lowerMajor(
@@ -151,31 +152,31 @@ trait VersionBumpingTrait
         bool $preserveBuildMetadata = false
     ): self {
         $parts = $this->parts;
-        
+
         if ($parts['major'] <= 0) {
             throw new \InvalidArgumentException('Cannot lower major version below 0');
         }
-        
+
         $parts['major']--;
-        
+
         if ($resetMinor) {
             $parts['minor'] = 0;
         }
-        
+
         if ($resetPatch) {
             $parts['patch'] = 0;
         }
-        
-        if (!$preservePreRelease) {
+
+        if (! $preservePreRelease) {
             $parts['pre'] = null;
         }
-        
-        if (!$preserveBuildMetadata) {
+
+        if (! $preserveBuildMetadata) {
             $parts['build'] = null;
         }
-        
+
         $newVersionString = $this->buildVersionString($parts);
-        
+
         return new self($newVersionString, $parts);
     }
 
@@ -184,10 +185,11 @@ trait VersionBumpingTrait
      * Optionally resets patch.
      * Throws an exception if the minor version is already 0.
      *
-     * @param bool $resetPatch Whether to reset the patch version to 0 (default: false)
-     * @param bool $preservePreRelease Whether to preserve the pre-release info (default: false)
-     * @param bool $preserveBuildMetadata Whether to preserve the build metadata (default: false)
+     * @param  bool  $resetPatch  Whether to reset the patch version to 0 (default: false)
+     * @param  bool  $preservePreRelease  Whether to preserve the pre-release info (default: false)
+     * @param  bool  $preserveBuildMetadata  Whether to preserve the build metadata (default: false)
      * @return self A new Version instance with the updated version
+     *
      * @throws \InvalidArgumentException If the minor version is already 0
      */
     public function lowerMinor(
@@ -196,27 +198,27 @@ trait VersionBumpingTrait
         bool $preserveBuildMetadata = false
     ): self {
         $parts = $this->parts;
-        
+
         if ($parts['minor'] <= 0) {
             throw new \InvalidArgumentException('Cannot lower minor version below 0');
         }
-        
+
         $parts['minor']--;
-        
+
         if ($resetPatch) {
             $parts['patch'] = 0;
         }
-        
-        if (!$preservePreRelease) {
+
+        if (! $preservePreRelease) {
             $parts['pre'] = null;
         }
-        
-        if (!$preserveBuildMetadata) {
+
+        if (! $preserveBuildMetadata) {
             $parts['build'] = null;
         }
-        
+
         $newVersionString = $this->buildVersionString($parts);
-        
+
         return new self($newVersionString, $parts);
     }
 
@@ -224,52 +226,53 @@ trait VersionBumpingTrait
      * Lowers the patch version number by 1.
      * Throws an exception if the patch version is already 0.
      *
-     * @param bool $preservePreRelease Whether to preserve the pre-release info (default: false)
-     * @param bool $preserveBuildMetadata Whether to preserve the build metadata (default: false)
+     * @param  bool  $preservePreRelease  Whether to preserve the pre-release info (default: false)
+     * @param  bool  $preserveBuildMetadata  Whether to preserve the build metadata (default: false)
      * @return self A new Version instance with the updated version
+     *
      * @throws \InvalidArgumentException If the patch version is already 0
      */
     public function lowerPatch(bool $preservePreRelease = false, bool $preserveBuildMetadata = false): self
     {
         $parts = $this->parts;
-        
+
         if ($parts['patch'] <= 0) {
             throw new \InvalidArgumentException('Cannot lower patch version below 0');
         }
-        
+
         $parts['patch']--;
-        
-        if (!$preservePreRelease) {
+
+        if (! $preservePreRelease) {
             $parts['pre'] = null;
         }
-        
-        if (!$preserveBuildMetadata) {
+
+        if (! $preserveBuildMetadata) {
             $parts['build'] = null;
         }
-        
+
         $newVersionString = $this->buildVersionString($parts);
-        
+
         return new self($newVersionString, $parts);
     }
 
     /**
      * Builds a version string from version parts.
      *
-     * @param array $parts The version parts
+     * @param  array  $parts  The version parts
      * @return string The formatted version string
      */
     private function buildVersionString(array $parts): string
     {
         $version = "{$parts['major']}.{$parts['minor']}.{$parts['patch']}";
-        
-        if (!empty($parts['pre'])) {
+
+        if (! empty($parts['pre'])) {
             $version .= "-{$parts['pre']}";
         }
-        
-        if (!empty($parts['build'])) {
+
+        if (! empty($parts['build'])) {
             $version .= "+{$parts['build']}";
         }
-        
+
         return $version;
     }
-} 
+}
