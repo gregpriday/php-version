@@ -1,0 +1,26 @@
+{
+    "name": "gregpriday/php-version",
+    "description": "A simple, powerful PHP class for parsing, validating, and comparing semantic version strings.",
+    "autoload": {
+        "psr-4": {
+            "GregPriday\\Version\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Greg Priday",
+            "email": "greg@siteorigin.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^12.0"
+    }
+}
