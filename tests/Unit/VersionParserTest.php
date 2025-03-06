@@ -129,4 +129,107 @@ class VersionParserTest extends TestCase
         $this->assertNull($parts['pre']);
         $this->assertEquals('exp.sha.5114f85', $parts['build']);
     }
+
+    /**
+     * Test loose parsing of version strings.
+     */
+    #[DataProvider('looseVersionsProvider')]
+    public function test_loose_parsing(
+        string $versionString,
+        int $expectedMajor,
+        int $expectedMinor,
+        int $expectedPatch,
+        ?string $expectedPreRelease,
+        ?string $expectedBuild = null
+    ): void {
+        $parser = new VersionParser;
+        $parts = $parser->parse($versionString, false); // strict = false
+
+        $this->assertNotNull($parts);
+        $this->assertEquals($expectedMajor, $parts['major']);
+        $this->assertEquals($expectedMinor, $parts['minor']);
+        $this->assertEquals($expectedPatch, $parts['patch']);
+        $this->assertEquals($expectedPreRelease, $parts['pre']);
+        $this->assertEquals($expectedBuild, $parts['build']);
+    }
+
+    public static function looseVersionsProvider(): array
+    {
+        return [
+            'standard version still works' => ['1.2.3', 1, 2, 3, null, null],
+            'v prefix' => ['v1.2.3', 1, 2, 3, null, null],
+            'major.minor only' => ['1.2', 1, 2, 0, null, null],
+            'major only' => ['1', 1, 0, 0, null, null],
+            'v prefix with major only' => ['v2', 2, 0, 0, null, null],
+            'v prefix with major.minor' => ['v2.1', 2, 1, 0, null, null],
+            'v prefix with prerelease' => ['v1.2.3-beta', 1, 2, 3, 'beta', null],
+            'v prefix with build metadata' => ['v1.2.3+build.1', 1, 2, 3, null, 'build.1'],
+            'major only with prerelease' => ['1-alpha', 1, 0, 0, 'alpha', null],
+            'major.minor with prerelease' => ['1.2-beta', 1, 2, 0, 'beta', null],
+        ];
+    }
+
+    /**
+     * Test that invalid version strings stay invalid even in loose mode.
+     */
+    #[DataProvider('invalidLooseVersionsProvider')]
+    public function test_loose_parsing_invalid(string $versionString): void
+    {
+        $parser = new VersionParser;
+        $parts = $parser->parse($versionString, false); // strict = false
+
+        $this->assertNull($parts);
+    }
+
+    public static function invalidLooseVersionsProvider(): array
+    {
+        return [
+            'text only' => ['version'],
+            'invalid format' => ['1.2.3.4'],
+            'invalid characters' => ['1.2.x'],
+            'empty string' => [''],
+        ];
+    }
+
+    /**
+     * Test Version::fromString with strict and loose modes
+     */
+    public function test_version_from_string_modes(): void
+    {
+        // Test strict mode (should throw an exception)
+        $this->expectException(\InvalidArgumentException::class);
+        Version::fromString('v1.2.3');
+
+        // This line won't be executed due to the exception
+    }
+
+    /**
+     * Test Version::fromString with loose mode
+     */
+    public function test_version_from_string_loose_mode(): void
+    {
+        // Test loose mode
+        $version = Version::fromString('v1.2.3', false);
+        $this->assertInstanceOf(Version::class, $version);
+        $this->assertEquals(1, $version->getMajor());
+        $this->assertEquals(2, $version->getMinor());
+        $this->assertEquals(3, $version->getPatch());
+        $this->assertNull($version->getPreRelease());
+
+        // Test loose mode with major.minor only
+        $version = Version::fromString('1.2', false);
+        $this->assertInstanceOf(Version::class, $version);
+        $this->assertEquals(1, $version->getMajor());
+        $this->assertEquals(2, $version->getMinor());
+        $this->assertEquals(0, $version->getPatch());
+        $this->assertNull($version->getPreRelease());
+
+        // Test loose mode with major only
+        $version = Version::fromString('1', false);
+        $this->assertInstanceOf(Version::class, $version);
+        $this->assertEquals(1, $version->getMajor());
+        $this->assertEquals(0, $version->getMinor());
+        $this->assertEquals(0, $version->getPatch());
+        $this->assertNull($version->getPreRelease());
+    }
 }

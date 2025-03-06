@@ -40,14 +40,15 @@ class Version
      *
      * @param  string  $version  A version string like "1.2.3", "0.9.0-beta", or "1.0.0-rc1".
      * @param  array|null  $parts  Optional pre-parsed parts
+     * @param  bool  $strict  Whether to strictly adhere to semver format (default: true)
      */
-    public function __construct(string $version, ?array $parts = null)
+    public function __construct(string $version, ?array $parts = null, bool $strict = true)
     {
         $this->version = $version;
         $this->parts = $parts;
 
         if ($this->parts === null) {
-            $this->parts = self::getParser()->parse($version);
+            $this->parts = self::getParser()->parse($version, $strict);
         }
     }
 
@@ -75,11 +76,12 @@ class Version
      * Create a Version instance from a version string.
      *
      * @param  string  $versionString  A version string
+     * @param  bool  $strict  Whether to strictly adhere to semver format (default: true)
      * @return static
      */
-    public static function fromString(string $versionString): self
+    public static function fromString(string $versionString, bool $strict = true): self
     {
-        return self::getParser()->createVersion($versionString);
+        return self::getParser()->createVersion($versionString, $strict);
     }
 
     /**
