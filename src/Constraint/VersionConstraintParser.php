@@ -99,6 +99,11 @@ class VersionConstraintParser
 
         // Check for equality operator first (no prefix means equal)
         if (preg_match('/^[0-9]/', $constraintString)) {
+            // Validate the version is a complete semver (matches X.Y.Z format)
+            if (! preg_match('/^\d+\.\d+\.\d+/', $constraintString)) {
+                throw new \InvalidArgumentException("Invalid version format in constraint: {$constraintString}");
+            }
+
             return new VersionConstraint('=', Version::fromString($constraintString));
         }
 
@@ -114,7 +119,12 @@ class VersionConstraintParser
 
             // Validate the version part is not empty
             if (empty($versionString)) {
-                throw new \InvalidArgumentException("Invalid constraint format: {$constraintString}");
+                throw new \InvalidArgumentException("Missing version after operator in constraint: {$constraintString}");
+            }
+
+            // Validate the version is a complete semver (matches X.Y.Z format)
+            if (! preg_match('/^\d+\.\d+\.\d+/', $versionString)) {
+                throw new \InvalidArgumentException("Invalid version format in constraint: {$constraintString}");
             }
 
             // Create a Version object for the reference version

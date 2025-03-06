@@ -125,4 +125,27 @@ class VersionTest extends TestCase
         $this->assertNull($stableExtraInfo['pre_release']);
         $this->assertTrue($stableExtraInfo['is_stable']);
     }
+
+    /**
+     * Test getting build metadata.
+     */
+    #[DataProvider('buildMetadataProvider')]
+    public function test_get_build_metadata(string $versionString, ?string $expectedBuildMetadata): void
+    {
+        $version = new Version($versionString);
+        $this->assertEquals($expectedBuildMetadata, $version->getBuildMetadata());
+    }
+
+    /**
+     * Data provider for build metadata tests.
+     */
+    public static function buildMetadataProvider(): array
+    {
+        return [
+            'no build metadata' => ['1.0.0', null],
+            'simple build metadata' => ['1.0.0+build.1', 'build.1'],
+            'version with pre-release and build metadata' => ['1.0.0-alpha+build.123', 'build.123'],
+            'complex build metadata' => ['2.0.0+exp.sha.5114f85', 'exp.sha.5114f85'],
+        ];
+    }
 }

@@ -146,6 +146,14 @@ class Version
     }
 
     /**
+     * Get the build metadata, if any.
+     */
+    public function getBuildMetadata(): ?string
+    {
+        return $this->parts['build'] ?? null;
+    }
+
+    /**
      * Get extra information about the version.
      *
      * @return array Associative array of version details.
@@ -158,6 +166,7 @@ class Version
             'minor' => $this->getMinor(),
             'patch' => $this->getPatch(),
             'pre_release' => $this->getPreRelease(),
+            'build_metadata' => $this->getBuildMetadata(),
             'is_stable' => $this->isStable(),
         ];
     }

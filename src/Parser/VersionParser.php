@@ -22,7 +22,7 @@ class VersionParser implements VersionParserInterface
     public function parse(string $versionString): ?array
     {
         if (preg_match(
-            '/^(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)(?:-(?P<pre>[0-9A-Za-z.-]+))?$/',
+            '/^(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)(?:-(?P<pre>[0-9A-Za-z.-]+))?(?:\+(?P<build>[0-9A-Za-z.-]+))?$/',
             $versionString,
             $matches
         )) {
@@ -30,7 +30,8 @@ class VersionParser implements VersionParserInterface
                 'major' => (int) $matches['major'],
                 'minor' => (int) $matches['minor'],
                 'patch' => (int) $matches['patch'],
-                'pre' => $matches['pre'] ?? null,
+                'pre' => isset($matches['pre']) && $matches['pre'] !== '' ? $matches['pre'] : null,
+                'build' => isset($matches['build']) && $matches['build'] !== '' ? $matches['build'] : null,
             ];
         }
 
