@@ -4,6 +4,7 @@ namespace GregPriday\Version;
 
 use GregPriday\Version\Parser\VersionParser;
 use GregPriday\Version\Parser\VersionParserInterface;
+use GregPriday\Version\Traits\VersionBumpingTrait;
 
 /**
  * Class Version
@@ -17,6 +18,8 @@ use GregPriday\Version\Parser\VersionParserInterface;
  */
 class Version
 {
+    use VersionBumpingTrait;
+    
     /**
      * The version string.
      */
