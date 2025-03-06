@@ -2,6 +2,9 @@
 
 namespace GregPriday\Version;
 
+use GregPriday\Version\Parser\VersionParser;
+use GregPriday\Version\Parser\VersionParserInterface;
+
 /**
  * Class Version
  *
@@ -16,48 +19,64 @@ class Version
 {
     /**
      * The version string.
-     *
-     * @var string
      */
     protected string $version;
 
     /**
      * Parsed version parts.
-     *
-     * @var array|null
      */
     protected ?array $parts = null;
 
     /**
+     * The version parser instance.
+     */
+    private static ?VersionParserInterface $parser = null;
+
+    /**
      * Version constructor.
      *
-     * @param string $version A version string like "1.2.3", "0.9.0-beta", or "1.0.0-rc1".
+     * @param  string  $version  A version string like "1.2.3", "0.9.0-beta", or "1.0.0-rc1".
+     * @param  array|null  $parts  Optional pre-parsed parts
      */
-    public function __construct(string $version)
+    public function __construct(string $version, ?array $parts = null)
     {
         $this->version = $version;
-        $this->parseVersion();
+        $this->parts = $parts;
+
+        if ($this->parts === null) {
+            $this->parts = self::getParser()->parse($version);
+        }
     }
 
     /**
-     * Parse the version string into its components.
-     *
-     * Expected format: major.minor.patch[-preRelease]
+     * Set the parser instance to use.
      */
-    protected function parseVersion(): void
+    public static function setParser(VersionParserInterface $parser): void
     {
-        if (preg_match(
-            '/^(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)(?:-(?P<pre>[0-9A-Za-z.-]+))?$/',
-            $this->version,
-            $matches
-        )) {
-            $this->parts = [
-                'major' => (int) $matches['major'],
-                'minor' => (int) $matches['minor'],
-                'patch' => (int) $matches['patch'],
-                'pre'   => $matches['pre'] ?? null,
-            ];
+        self::$parser = $parser;
+    }
+
+    /**
+     * Get the parser instance.
+     */
+    public static function getParser(): VersionParserInterface
+    {
+        if (self::$parser === null) {
+            self::$parser = new VersionParser;
         }
+
+        return self::$parser;
+    }
+
+    /**
+     * Create a Version instance from a version string.
+     *
+     * @param  string  $versionString  A version string
+     * @return static
+     */
+    public static function fromString(string $versionString): self
+    {
+        return self::getParser()->createVersion($versionString);
     }
 
     /**
@@ -66,12 +85,10 @@ class Version
      * A version is stable if:
      * - The major version is at least 1, and
      * - There is no pre-release part (e.g., "beta", "rc", etc.)
-     *
-     * @return bool
      */
     public function isStable(): bool
     {
-        if (!$this->parts) {
+        if (! $this->parts) {
             return false;
         }
         if ($this->parts['major'] < 1) {
@@ -80,23 +97,24 @@ class Version
         if ($this->parts['pre'] !== null) {
             return false;
         }
+
         return true;
     }
 
     /**
      * Determine if the version is a pre-release.
-     *
-     * @return bool
      */
     public function isPreRelease(): bool
     {
+        if (! $this->parts) {
+            return false;
+        }
+
         return $this->parts['pre'] !== null;
     }
 
     /**
      * Get the major version number.
-     *
-     * @return int|null
      */
     public function getMajor(): ?int
     {
@@ -105,8 +123,6 @@ class Version
 
     /**
      * Get the minor version number.
-     *
-     * @return int|null
      */
     public function getMinor(): ?int
     {
@@ -115,8 +131,6 @@ class Version
 
     /**
      * Get the patch version number.
-     *
-     * @return int|null
      */
     public function getPatch(): ?int
     {
@@ -125,8 +139,6 @@ class Version
 
     /**
      * Get the pre-release identifier, if any.
-     *
-     * @return string|null
      */
     public function getPreRelease(): ?string
     {
@@ -141,12 +153,12 @@ class Version
     public function getExtraInfo(): array
     {
         return [
-            'version'     => $this->version,
-            'major'       => $this->getMajor(),
-            'minor'       => $this->getMinor(),
-            'patch'       => $this->getPatch(),
+            'version' => $this->version,
+            'major' => $this->getMajor(),
+            'minor' => $this->getMinor(),
+            'patch' => $this->getPatch(),
             'pre_release' => $this->getPreRelease(),
-            'is_stable'   => $this->isStable(),
+            'is_stable' => $this->isStable(),
         ];
     }
 }

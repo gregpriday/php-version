@@ -9,14 +9,14 @@ use PHPUnit\Framework\TestCase;
 class VersionTest extends TestCase
 {
     #[DataProvider('validVersionsProvider')]
-    public function testConstructorWithValidVersions(
+    public function test_constructor_with_valid_versions(
         string $versionString,
         int $expectedMajor,
         int $expectedMinor,
         int $expectedPatch,
         ?string $expectedPreRelease
     ): void {
-        $version = new Version($versionString);
+        $version = Version::fromString($versionString);
 
         $this->assertEquals($expectedMajor, $version->getMajor());
         $this->assertEquals($expectedMinor, $version->getMinor());
@@ -38,9 +38,9 @@ class VersionTest extends TestCase
     }
 
     #[DataProvider('invalidVersionsProvider')]
-    public function testConstructorWithInvalidVersions(string $versionString): void
+    public function test_constructor_with_invalid_versions(string $versionString): void
     {
-        $version = new Version($versionString);
+        $version = Version::fromString($versionString);
 
         $this->assertNull($version->getMajor());
         $this->assertNull($version->getMinor());
@@ -61,9 +61,9 @@ class VersionTest extends TestCase
     }
 
     #[DataProvider('stableVersionsProvider')]
-    public function testIsStable(string $versionString, bool $expectedIsStable): void
+    public function test_is_stable(string $versionString, bool $expectedIsStable): void
     {
-        $version = new Version($versionString);
+        $version = Version::fromString($versionString);
         $this->assertEquals($expectedIsStable, $version->isStable());
     }
 
@@ -82,9 +82,9 @@ class VersionTest extends TestCase
     }
 
     #[DataProvider('preReleaseVersionsProvider')]
-    public function testIsPreRelease(string $versionString, bool $expectedIsPreRelease): void
+    public function test_is_pre_release(string $versionString, bool $expectedIsPreRelease): void
     {
-        $version = new Version($versionString);
+        $version = Version::fromString($versionString);
         $this->assertEquals($expectedIsPreRelease, $version->isPreRelease());
     }
 
@@ -102,9 +102,9 @@ class VersionTest extends TestCase
         ];
     }
 
-    public function testGetExtraInfo(): void
+    public function test_get_extra_info(): void
     {
-        $version = new Version('1.2.3-beta');
+        $version = Version::fromString('1.2.3-beta');
         $extraInfo = $version->getExtraInfo();
 
         $this->assertEquals('1.2.3-beta', $extraInfo['version']);
@@ -115,7 +115,7 @@ class VersionTest extends TestCase
         $this->assertEquals(false, $extraInfo['is_stable']);
 
         // Test with a stable version
-        $stableVersion = new Version('2.0.0');
+        $stableVersion = Version::fromString('2.0.0');
         $stableExtraInfo = $stableVersion->getExtraInfo();
 
         $this->assertEquals('2.0.0', $stableExtraInfo['version']);
