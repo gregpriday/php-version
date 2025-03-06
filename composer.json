@@ -1,6 +1,7 @@
 {
     "name": "gregpriday/php-version",
     "description": "A simple, powerful PHP class for parsing, validating, and comparing semantic version strings.",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "GregPriday\\Version\\": "src/"
